@@ -16,6 +16,9 @@ import sql_statements
 
 start_date = datetime.datetime.utcnow()
 
+aws_access_keys = "aws_credentials"
+aws_access_keys = "my_aws"
+
 dag = DAG(
     "lesson3.exercise3",
     start_date=start_date,
@@ -27,7 +30,7 @@ trips_subdag_task = SubDagOperator(
         "lesson3.exercise3",
         trips_task_id,
         "redshift",
-        "aws_credentials",
+        aws_access_keys,
         "trips",
         sql_statements.CREATE_TRIPS_TABLE_SQL,
         s3_bucket="udacity-dend",
@@ -44,7 +47,7 @@ stations_subdag_task = SubDagOperator(
         "lesson3.exercise3",
         stations_task_id,
         "redshift",
-        "aws_credentials",
+        aws_access_keys,
         "stations",
         sql_statements.CREATE_STATIONS_TABLE_SQL,
         s3_bucket="udacity-dend",
