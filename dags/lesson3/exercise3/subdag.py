@@ -38,9 +38,18 @@ def get_s3_to_redshift_dag(
         postgres_conn_id=redshift_conn_id,
         sql=create_sql_stmt
     )
-
-   #
+    copy_task = S3ToRedshiftOperator(
+        task_id=f"load_{table}_from_s3_to_redshift",
+        dag=dag,
+        table=table,
+        redshift_conn_id=redshift_conn_id,
+        aws_credentials_id=aws_credentials_id,
+        s3_bucket=s3_bucket,
+        s3_key=s3_key
+    )
+    #
     # TODO: Use DAG ordering to place the check task
     #
-
+    create_task >> copy_task
+    
     return dag
