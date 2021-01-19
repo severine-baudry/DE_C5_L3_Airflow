@@ -55,23 +55,6 @@ stations_subdag_task = SubDagOperator(
     dag=dag,
 )
 
-#
-# TODO: Consolidate check_trips and check_stations into a single check in the subdag
-#       as we did with the create and copy in the demo
-#
-check_trips = HasRowsOperator(
-    task_id="check_trips_data",
-    dag=dag,
-    redshift_conn_id="redshift",
-    table="trips"
-)
-
-check_stations = HasRowsOperator(
-    task_id="check_stations_data",
-    dag=dag,
-    redshift_conn_id="redshift",
-    table="stations"
-)
 
 location_traffic_task = PostgresOperator(
     task_id="calculate_location_traffic",
