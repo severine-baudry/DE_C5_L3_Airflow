@@ -8,5 +8,6 @@ class UdacityPlugin(AirflowPlugin):
     operators = [
         operators.FactsCalculatorOperator,
         operators.HasRowsOperator,
-        operators.S3ToRedshiftOperator
+        operators.S3ToRedshiftOperator,
+        operators.DummySQLOperator,
     ]
