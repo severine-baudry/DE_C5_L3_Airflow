@@ -31,14 +31,27 @@ class FactsCalculatorOperator(BaseOperator):
         #
         # TODO: Set attributes from __init__ instantiation arguments
         #
+        self.redshift_conn_id = redshift_conn_id
+        self.origin_table = origin_table
+        self.destination_table = destination_table
+        self.fact_column = fact_column
+        self.groupby_column = groupby_column
 
     def execute(self, context):
         #
         # TODO: Fetch the redshift hook
         #
-
+        self.log.info("Connection to redshift")
+        redshift_hook = PostgresHook(postgres_conn_id = self.redshift_conn_id)
+        
         #
         # TODO: Format the `facts_sql_template` and run the query against redshift
         #
-
-        pass
+        groupby_column = self.groupby_column
+        fact_column = self.fact_column
+        origin_table = self.origin_table
+        destination_table = self.destination_table              
+        self.log.info("SQL for fact calculation :", facts_sql_template)
+        self.log.info(facts_sql_template)
+        redshift_hook.run( facts_sql_template )
+        
