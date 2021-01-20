@@ -5,8 +5,12 @@ from airflow import DAG
 from airflow.operators import (
     FactsCalculatorOperator,
     HasRowsOperator,
-    S3ToRedshiftOperator
+    S3ToRedshiftOperator,
+    DummySQLOperator,
+    PostgresOperator
 )
+
+import sql_statements
 
 my_redshift_conn = "redshift"
 my_aws_credentials="aws_credentials"
@@ -22,6 +26,13 @@ my_aws_credentials="aws_credentials"
 #              skeleton defined in plugins/operators/facts_calculator.py
 #
 dag = DAG("lesson3.exercise4", start_date=datetime.datetime.utcnow())
+
+create_trips_table = PostgresOperator(
+    task_id="create_trips_table",
+    dag=dag,
+    postgres_conn_id=my_redshift_conn,
+    sql=sql_statements.CREATE_TRIPS_TABLE_SQL
+)
 
 #
 # TODO: Load trips data from S3 to RedShift. Use the s3_key
@@ -62,7 +73,15 @@ calculate_facts = FactsCalculatorOperator(
                 groupby_column="bikeid"
         )
 
+dummy_sql = DummySQLOperator(
+                task_id = "dummy_sql",
+                dag = dag,
+                origin_table="trips",
+                destination_table="table_tripduration",
+                fact_column="tripduration",
+                groupby_column="bikeid"
+        )
 #
 # TODO: Define task ordering for the DAG tasks you defined
 #
-copy_trips_task >> check_trips >> calculate_facts
+create_trips_table >> copy_trips_task >> check_trips >> calculate_facts
